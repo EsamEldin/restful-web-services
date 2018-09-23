@@ -10,6 +10,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -123,6 +126,26 @@ public class UserJpaResource {
        return ResponseEntity.created(location).build();
          
     }
+    
+    public Page<User> findPaginated1(int page, int size) {
+        return userRepository.findAll(new PageRequest(page, size));
+    }
+    
+    @RequestMapping(
+        value = "/PagedUsers", 
+        params = { "page", "size" }, 
+        method = RequestMethod.GET
+      )
+      public Page<User> findPaginated(
+        @RequestParam("page") int page, @RequestParam("size") int size) {
+   
+          Page<User> resultPage = userRepository.findAll(PageRequest.of(page, size));
+          if (page > resultPage.getTotalPages()) {
+          System.out.println("errrrrrrrrrrrrrrrrrrrrrrrrrrr");   
+          }
+   
+          return resultPage;
+      }
     
 
 }
